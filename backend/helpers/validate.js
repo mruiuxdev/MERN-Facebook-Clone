@@ -27,22 +27,24 @@ const generateRandomString = (length) => {
   return randomString;
 };
 
-const validateUsername = async (username) => {
+const generateUniqueUsername = async (firstName, lastName) => {
+  let userName = `${firstName.toLowerCase()}${lastName.toLowerCase()}`;
+
   let isUnique = false;
 
   do {
-    let check = await User.findOne({ username });
+    const check = await User.findOne({ userName });
 
     if (check) {
       const randomSuffix = generateRandomString(4);
 
-      username = username + randomSuffix;
+      userName = `${firstName.toLowerCase()}${lastName.toLowerCase()}${randomSuffix}`;
     } else {
       isUnique = true;
     }
   } while (!isUnique);
 
-  return username;
+  return userName.toLowerCase();
 };
 
-module.exports = { validateEmail, validateLength, validateUsername };
+module.exports = { validateEmail, validateLength, generateUniqueUsername };

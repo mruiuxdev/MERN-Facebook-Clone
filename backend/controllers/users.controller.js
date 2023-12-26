@@ -2,17 +2,18 @@ const bcrypt = require("bcrypt");
 const {
   validateEmail,
   validateLength,
-  validateUsername,
+  generateRandomString,
+  generateUniqueUsername,
 } = require("../helpers/validate");
 const User = require("../models/users.model");
 const { generateToken } = require("../helpers/token");
+const { sendVerificationEmail } = require("../helpers/mailer");
 
 const registerUserController = async (req, res) => {
   try {
     const {
       firstName,
       lastName,
-      userName,
       email,
       password,
       bYear,
@@ -58,15 +59,12 @@ const registerUserController = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    let tempUsername = firstName + lastName;
-    let newUsername = await validateUsername(
-      userName ? userName : tempUsername
-    );
+    let newUserName = await generateUniqueUsername(firstName, lastName);
 
     const user = await new User({
       firstName,
       lastName,
-      userName: newUsername,
+      userName: newUserName,
       email,
       password: hashedPassword,
       bYear,
@@ -80,11 +78,28 @@ const registerUserController = async (req, res) => {
       "30m"
     );
 
-    console.log(emailVerificationToken);
+    const emailVerificationUrl = `${process.env.FRONT_URL}/activate/${emailVerificationToken}`;
+
+    sendVerificationEmail(
+      user.email,
+      `${user.firstName} ${user.lastName}`,
+      emailVerificationUrl
+    );
+
+    const accessToken = generateToken({ id: user._id.toString() }, "7d");
 
     res.json({
       result: "Success",
-      message: "Account created successfully",
+      message: "Registered success! please, activate your email",
+      user: {
+        id: user._id,
+        firstName,
+        lastName,
+        email,
+        isVerified: user.isVerified,
+        picture: user.picture,
+        token: accessToken,
+      },
     });
   } catch (error) {
     res.status(500).json({ result: "Failed", message: error.message });
