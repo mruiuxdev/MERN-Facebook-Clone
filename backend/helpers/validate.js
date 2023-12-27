@@ -44,7 +44,7 @@ const generateUniqueUsername = async (firstName, lastName) => {
     }
   } while (!isUnique);
 
-  return userName.toLowerCase();
+  return userName;
 };
 
 module.exports = { validateEmail, validateLength, generateUniqueUsername };

@@ -1,15 +1,15 @@
+const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const {
   validateEmail,
   validateLength,
-  generateRandomString,
   generateUniqueUsername,
 } = require("../helpers/validate");
 const User = require("../models/users.model");
 const { generateToken } = require("../helpers/token");
 const { sendVerificationEmail } = require("../helpers/mailer");
 
-const registerUserController = async (req, res) => {
+const registerController = async (req, res) => {
   try {
     const {
       firstName,
@@ -90,13 +90,13 @@ const registerUserController = async (req, res) => {
 
     res.json({
       result: "Success",
-      message: "Registered success! please, activate your email",
+      message: "Registered successfully! please, activate your email",
       user: {
         id: user._id,
         firstName,
         lastName,
         email,
-        isVerified: user.isVerified,
+        verified: user.verified,
         picture: user.picture,
         token: accessToken,
       },
@@ -106,4 +106,78 @@ const registerUserController = async (req, res) => {
   }
 };
 
-module.exports = { registerUserController };
+const activeAccountController = async (req, res) => {
+  try {
+    const { token } = req.body;
+
+    const user = jwt.verify(token, process.env.TOKEN_SECRET);
+
+    const userIsVerified = await User.findById(user.id);
+
+    if (userIsVerified.verified === true) {
+      return res
+        .status(400)
+        .json({ result: "Failed", message: "This email is already activated" });
+    } else {
+      await User.findByIdAndUpdate(
+        user.id,
+        { verified: true },
+        { runValidator: true }
+      );
+
+      return res.json({
+        result: "Success",
+        message: "Account has been activate successfully!",
+      });
+    }
+  } catch (error) {
+    res.status(500).json({ result: "Failed", message: error.message });
+  }
+};
+
+const loginController = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(400).json({
+        result: "Failed",
+        message: "This email address is not connected to an account",
+      });
+    }
+
+    const passwordMatched = await bcrypt.compare(password, user.password);
+
+    if (!passwordMatched) {
+      return res
+        .status(400)
+        .json({ result: "Failed", message: "Invalid credential" });
+    } else {
+      const accessToken = generateToken({ id: user._id.toString() }, "7d");
+
+      return res.json({
+        result: "Success",
+        message: "Logged Successfully!",
+        user: {
+          id: user._id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email,
+          verified: user.verified,
+          picture: user.picture,
+          token: accessToken,
+        },
+      });
+    }
+  } catch (error) {
+    res.status(500).json({ result: "Failed", message: error.message });
+  }
+};
+
+module.exports = {
+  registerController,
+  activeAccountController,
+  loginController,
+};
