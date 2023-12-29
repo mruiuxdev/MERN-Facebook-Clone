@@ -5,7 +5,7 @@ import { BrowserRouter as Router } from "react-router-dom";
 import { createStore } from "redux";
 import { composeWithDevTools } from "redux-devtools-extension";
 import App from "./App";
-import "./index.css";
+import "./index.scss";
 import rootReducer from "./reducers";
 import "./styles/icons/icons.css";
 

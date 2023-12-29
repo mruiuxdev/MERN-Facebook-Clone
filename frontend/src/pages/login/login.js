@@ -1,4 +1,5 @@
 import LoginForm from "../../components/login/LoginForm";
+import RegisterForm from "../../components/regiseter/RegisterForm";
 import "./style.scss";
 
 const Login = () => {
@@ -6,7 +7,7 @@ const Login = () => {
     <div className="login">
       <div className="login_wrapper">
         <LoginForm />
-        <div className="register"></div>
+        <RegisterForm />
       </div>
     </div>
   );

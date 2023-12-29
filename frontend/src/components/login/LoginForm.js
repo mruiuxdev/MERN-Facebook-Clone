@@ -2,7 +2,7 @@ import { Form, Formik } from "formik";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import * as Yup from "yup";
-import LoginInput from "../../components/input";
+import Input from "../../components/input";
 
 const LoginForm = () => {
   const [login, setLogin] = useState({ email: "", password: "" });
@@ -41,13 +41,13 @@ const LoginForm = () => {
           >
             {(formik) => (
               <Form>
-                <LoginInput
+                <Input
                   type="email"
                   name="email"
                   placeholder="Email address"
                   onChange={handleLoginChange}
                 />
-                <LoginInput
+                <Input
                   type="password"
                   name="password"
                   placeholder="Password"

@@ -2,14 +2,12 @@ import { ErrorMessage, useField } from "formik";
 import "./style.scss";
 import { useMediaQuery } from "react-responsive";
 
-const LoginInput = ({ placeholder, bottom, ...props }) => {
+const Input = ({ placeholder, bottom, ...props }) => {
   const [field, meta] = useField(props);
 
   const desktopView = useMediaQuery({
     query: "(min-width: 990px)",
   });
-
-  console.log(desktopView);
 
   return (
     <div className="input_wrap">
@@ -64,4 +62,4 @@ const LoginInput = ({ placeholder, bottom, ...props }) => {
   );
 };
 
-export default LoginInput;
+export default Input;
