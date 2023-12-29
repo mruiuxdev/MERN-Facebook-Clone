@@ -52,6 +52,7 @@
         display: flex;
         gap: 5px;
         select {
+          cursor: pointer;
           flex: 0 0 calc((100% / 3) - 5px);
           max-width: calc((100% / 3) - 5px);
           padding: 12px 10px;
@@ -59,7 +60,7 @@
           border-radius: 7px;
           outline: none;
           &:focus {
-            border-color: var(--color-blue);
+            border-color: var(--blue-color);
           }
         }
         label {
@@ -75,6 +76,24 @@
           justify-content: space-between;
         }
       }
+    }
+  }
+  .reg_info {
+    font-size: 13px;
+    margin-top: 10px;
+    span {
+      color: var(--blue-color);
+    }
+  }
+  .reg_btn_wrapper {
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+    .signup_btn {
+      width: 100%;
+      background: var(--green-color);
+      padding: 10px;
+      font-size: 17px;
     }
   }
 }
