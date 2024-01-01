@@ -37,6 +37,7 @@
   .register_form {
     margin-top: 15px;
     .reg_line_header {
+      margin-top: 10px;
       display: flex;
       align-items: center;
       gap: 2px;
@@ -44,9 +45,6 @@
       color: var(--color-primary);
     }
     .reg_col {
-      &:last-of-type {
-        margin-top: 10px;
-      }
       .reg_grid {
         margin-top: 5px;
         display: flex;
