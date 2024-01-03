@@ -45,6 +45,7 @@
       color: var(--color-primary);
     }
     .reg_col {
+      position: relative;
       .reg_grid {
         margin-top: 5px;
         display: flex;
@@ -62,6 +63,7 @@
           }
         }
         label {
+          background: var(--bg-third);
           cursor: pointer;
           flex: 0 0 calc((100% / 2) - 5px);
           max-width: calc((100% / 2) - 5px);
@@ -72,6 +74,39 @@
           display: flex;
           align-items: center;
           justify-content: space-between;
+        }
+      }
+      .input_error {
+        background: #b94a48;
+        color: #fff;
+        border-radius: 7px;
+        font-size: 13px;
+        width: 100%;
+        padding: 14px 10px;
+        margin-bottom: 15px;
+        position: relative;
+        &.input_error_desktop {
+          position: absolute;
+          top: 23px;
+          left: -22.5rem;
+        }
+        .error_arrow_bottom {
+          top: -9px;
+          bottom: auto;
+          left: 15px;
+          border-bottom: 10px solid #b94a48;
+          border-right: 10px solid transparent;
+          border-left: 10px solid transparent;
+          position: absolute;
+          &.error_arrow_bottom_desktop {
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-left: 10px solid #b94a48;
+            left: auto;
+            right: -19px;
+            top: 13px;
+          }
         }
       }
     }
@@ -92,6 +127,33 @@
       background: var(--green-color);
       padding: 10px;
       font-size: 17px;
+    }
+  }
+  .reg_name {
+    @media (min-width: 990px) {
+      display: flex;
+      gap: 10px;
+    }
+  }
+  .reg_input {
+    background: var(--bg-third);
+  }
+  .input_error {
+    &.input_error_desktop {
+      right: calc(100% + 13px);
+      left: auto;
+    }
+    &.input_error_desktop_right {
+      left: calc(100% + 13px);
+      right: 0;
+      .error_arrow_bottom {
+        &.error_arrow_bottom_desktop {
+          border-right: 10px solid #b94a48;
+          border-left: 10px solid transparent;
+          right: auto;
+          left: -20px;
+        }
+      }
     }
   }
 }

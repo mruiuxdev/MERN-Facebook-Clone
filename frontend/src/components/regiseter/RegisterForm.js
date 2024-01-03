@@ -3,8 +3,21 @@ import "./style.scss";
 import Input from "../input";
 import * as Yup from "yup";
 import { useState } from "react";
+import { useMediaQuery } from "react-responsive";
+import SelectDateBirth from "../input/selectDateBirth";
+import RadioGender from "../input/radioGender";
+import { DotLoader } from "react-spinners";
+import axios from "axios";
+import { useDispatch } from "react-redux";
+import Cookies from "js-cookie";
 
 const RegisterForm = () => {
+  const dispatch = useDispatch();
+
+  const [success, setSuccess] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
   const [register, setRegister] = useState({
     firstName: "",
     lastName: "",
@@ -15,6 +28,8 @@ const RegisterForm = () => {
     bMonth: new Date().getMonth() + 1,
     bDay: new Date().getDate(),
   });
+
+  const [errorDate, setErrorDate] = useState("");
 
   const { firstName, lastName, email, password, gender, bYear, bMonth, bDay } =
     register;
@@ -62,6 +77,35 @@ const RegisterForm = () => {
       .max(36, "Password can't be more than 36 characters"),
   });
 
+  const desktopView = useMediaQuery({ query: "(min-width: 990px)" });
+
+  const handleRegisterSubmit = async () => {
+    try {
+      setLoading(true);
+
+      const { data } = await axios.post(
+        `${process.env.REACT_APP_API_URL}/register`,
+        { firstName, lastName, email, password, gender, bYear, bMonth, bDay }
+      );
+
+      setError("");
+      setSuccess(data?.message);
+      setLoading(false);
+
+      const { message, ...rest } = data;
+
+      setTimeout(() => {
+        dispatch({ type: "LOGIN", payload: rest });
+
+        Cookies.set("user", JSON.stringify(rest));
+      }, 2000);
+    } catch (error) {
+      setLoading(false);
+      setSuccess("");
+      setError(error.response.data?.message);
+    }
+  };
+
   return (
     <div className="blur">
       <div className="register">
@@ -83,109 +127,103 @@ const RegisterForm = () => {
             bDay,
           }}
           validationSchema={registerValidationSchema}
+          onSubmit={() => {
+            let currentDate = new Date();
+            let selectedDate = new Date(bYear, bMonth - 1, bDay);
+            let atLeast14 = new Date(1970 + 14, 0, 1);
+            let noMoreThan70 = new Date(1970 + 70, 0, 1);
+
+            if (
+              currentDate - selectedDate < atLeast14 ||
+              currentDate - selectedDate > noMoreThan70
+            ) {
+              setErrorDate(
+                "It looks you've entered the wrong info. Please make sure that you use your real date of birthday"
+              );
+            } else {
+              setErrorDate("");
+            }
+
+            handleRegisterSubmit();
+          }}
         >
           {(formik) => (
             <Form className="register_form">
-              <Input
-                type="text"
-                name="firstName"
-                placeholder="First Name"
-                onChange={handleRegisterChange}
-              />
-              <Input
-                type="text"
-                name="lastName"
-                placeholder="Last Name"
-                onChange={handleRegisterChange}
-              />
+              <div className="reg_name">
+                <Input
+                  type="text"
+                  name="firstName"
+                  placeholder="First Name"
+                  onChange={handleRegisterChange}
+                  bottom
+                  className="reg_input"
+                />
+                <Input
+                  type="text"
+                  name="lastName"
+                  placeholder="Last Name"
+                  onChange={handleRegisterChange}
+                  bottom
+                  errorRight
+                  className="reg_input"
+                />
+              </div>
               <Input
                 type="email"
                 name="email"
                 placeholder="Email address"
                 onChange={handleRegisterChange}
+                bottom
+                className="reg_input"
               />
               <Input
                 type="password"
                 name="password"
                 placeholder="Password"
                 onChange={handleRegisterChange}
+                bottom
+                errorRight
+                className="reg_input"
               />
               <div className="reg_col">
                 <div className="reg_line_header">
                   Date of birth <i className="info_icon"></i>
                 </div>
-                <div className="reg_grid">
-                  <select
-                    name="bDay"
-                    value={bDay}
-                    onChange={handleRegisterChange}
-                  >
-                    {days.map((day) => (
-                      <option key={day} month={day}>
-                        {day}
-                      </option>
-                    ))}
-                  </select>
-                  <select
-                    name="bMonth"
-                    value={bMonth}
-                    onChange={handleRegisterChange}
-                  >
-                    {months.map((month) => (
-                      <option value={month} key={month}>
-                        {month}
-                      </option>
-                    ))}
-                  </select>
-                  <select
-                    name="bYear"
-                    value={bYear}
-                    onChange={handleRegisterChange}
-                  >
-                    {years.map((year) => (
-                      <option key={year} value={year}>
-                        {year}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                <SelectDateBirth
+                  bDay={bDay}
+                  bMonth={bMonth}
+                  bYear={bYear}
+                  days={days}
+                  months={months}
+                  years={years}
+                  errorDate={errorDate}
+                  desktopView={desktopView}
+                  handleRegisterChange={handleRegisterChange}
+                />
               </div>
               <div className="reg_col">
                 <div className="reg_line_header">
                   Gender <i className="info_icon"></i>
                 </div>
-                <div className="reg_grid">
-                  <label htmlFor="male">
-                    <span> Male</span>
-                    <input
-                      type="radio"
-                      name="gender"
-                      id="male"
-                      value="male"
-                      onChange={handleRegisterChange}
-                    />
-                  </label>
-                  <label htmlFor="female">
-                    <span>Female</span>
-                    <input
-                      type="radio"
-                      name="gender"
-                      id="female"
-                      value="female"
-                      onChange={handleRegisterChange}
-                    />
-                  </label>
-                </div>
+                <RadioGender handleRegisterChange={handleRegisterChange} />
               </div>
               <div className="reg_info">
                 By clicking, sign up, you agree to our{" "}
-                <span>terms, data policy</span> and
-                <span>cookie policy</span>. You may receive notification from us
-                and can opt out at any time
+                <span>terms, data policy</span> and <span>cookie policy</span>.
+                You may receive notification from us and can opt out at any time
               </div>
               <div className="reg_btn_wrapper">
-                <button className="blue_btn signup_btn">Sign up</button>
+                <button disabled={loading} className="blue_btn signup_btn">
+                  {loading ? (
+                    <DotLoader color="#fff" loading={loading} size={30} />
+                  ) : (
+                    "Sign up"
+                  )}
+                </button>
               </div>
+
+              {error && <div className="error_text">{error}</div>}
+              {success && <div className="success_text">{success}</div>}
             </Form>
           )}
         </Formik>

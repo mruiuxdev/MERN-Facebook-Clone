@@ -4,10 +4,12 @@
   .login_wrap {
     min-height: 100vh;
     color: var(--color-primary);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     @media (min-width: 991px) {
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      flex-direction: row;
       width: 1000px;
       margin: 0 auto;
       padding: 0 2rem;
@@ -76,5 +78,11 @@
         font-size: 15px;
       }
     }
+  }
+  .error_text {
+    color: #b94a48;
+  }
+  .success_text {
+    color: var(--green-color);
   }
 }

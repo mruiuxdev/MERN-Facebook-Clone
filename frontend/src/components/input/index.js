@@ -2,7 +2,7 @@ import { ErrorMessage, useField } from "formik";
 import "./style.scss";
 import { useMediaQuery } from "react-responsive";
 
-const Input = ({ placeholder, bottom, ...props }) => {
+const Input = ({ placeholder, bottom, errorRight, ...props }) => {
   const [field, meta] = useField(props);
 
   const desktopView = useMediaQuery({
@@ -38,7 +38,13 @@ const Input = ({ placeholder, bottom, ...props }) => {
       {meta.touched && meta.error && bottom && (
         <div
           className={
-            desktopView ? "input_error input_error_desktop" : "input_error"
+            desktopView
+              ? `${
+                  errorRight
+                    ? "input_error input_error_desktop input_error_desktop_right"
+                    : "input_error input_error_desktop"
+                }`
+              : "input_error"
           }
           style={{ marginTop: "2px" }}
         >

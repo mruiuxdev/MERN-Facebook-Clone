@@ -39,6 +39,7 @@
     width: 100%;
     padding: 14px 10px;
     margin-bottom: 15px;
+    position: relative;
     &.input_error_desktop {
       position: absolute;
       top: 2px;
@@ -62,8 +63,8 @@
       }
     }
     .error_arrow_bottom {
-      top: auto;
-      bottom: 60px;
+      top: -9px;
+      bottom: auto;
       left: 15px;
       border-bottom: 10px solid #b94a48;
       border-right: 10px solid transparent;
