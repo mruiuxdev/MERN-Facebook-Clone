@@ -1,18 +1,21 @@
-import { Form, Formik } from "formik";
-import "./style.scss";
-import Input from "../input";
-import * as Yup from "yup";
-import { useState } from "react";
-import { useMediaQuery } from "react-responsive";
-import SelectDateBirth from "../input/selectDateBirth";
-import RadioGender from "../input/radioGender";
-import { DotLoader } from "react-spinners";
 import axios from "axios";
-import { useDispatch } from "react-redux";
+import { Form, Formik } from "formik";
 import Cookies from "js-cookie";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { useMediaQuery } from "react-responsive";
+import { useNavigate } from "react-router-dom";
+import { DotLoader } from "react-spinners";
+import * as Yup from "yup";
+import Input from "../input";
+import RadioGender from "../input/radioGender";
+import SelectDateBirth from "../input/selectDateBirth";
+import "./style.scss";
 
-const RegisterForm = () => {
+const RegisterForm = ({ setVisible }) => {
   const dispatch = useDispatch();
+
+  const navigate = useNavigate();
 
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
@@ -23,7 +26,7 @@ const RegisterForm = () => {
     lastName: "",
     email: "",
     password: "",
-    gender: "",
+    gender: "male",
     bYear: new Date().getFullYear(),
     bMonth: new Date().getMonth() + 1,
     bDay: new Date().getDate(),
@@ -98,6 +101,19 @@ const RegisterForm = () => {
         dispatch({ type: "LOGIN", payload: rest });
 
         Cookies.set("user", JSON.stringify(rest));
+
+        setRegister({
+          firstName: "",
+          lastName: "",
+          email: "",
+          password: "",
+          gender: "male",
+          bYear: new Date().getFullYear(),
+          bMonth: new Date().getMonth() + 1,
+          bDay: new Date().getDate(),
+        });
+
+        navigate("/");
       }, 2000);
     } catch (error) {
       setLoading(false);
@@ -110,7 +126,7 @@ const RegisterForm = () => {
     <div className="blur">
       <div className="register">
         <div className="register_header">
-          <i className="exit_icon"></i>
+          <i className="exit_icon" onClick={() => setVisible(false)}></i>
           <span>Sign Up</span>
           <span>It's quick and easy</span>
         </div>
